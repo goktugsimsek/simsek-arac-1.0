@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Şimşek Tekstil — Marka Araştırma Aracı</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --black: #000000;
+    --white: #ffffff;
+    --gray-50: #f9f9f9;
+    --gray-100: #f0f0f0;
+    --gray-200: #e0e0e0;
+    --gray-400: #999999;
+    --gray-600: #555555;
+    --gray-800: #222222;
+    --accent: #ffffff;
+    --radius: 8px;
+    --radius-lg: 14px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--black);
+    color: var(--white);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* HEADER */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 2rem;
+    border-bottom: 0.5px solid #222;
+    position: sticky;
+    top: 0;
+    background: rgba(0,0,0,0.95);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+  }
+  .logo-mark {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo-box {
+    width: 38px;
+    height: 38px;
+    background: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logo-box svg { width: 26px; height: 26px; }
+  .logo-text { font-size: 13px; font-weight: 500; letter-spacing: 0.06em; color: #aaa; text-transform: uppercase; }
+  .logo-text span { color: white; }
+  .header-tag {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--gray-400);
+    background: #111;
+    border: 0.5px solid #333;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  /* MAIN */
+  main {
+    flex: 1;
+    max-width: 860px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 3rem 2rem 4rem;
+  }
+
+  .hero {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+  }
+  .hero h1 strong { font-weight: 600; }
+  .hero p {
+    font-size: 14px;
+    color: var(--gray-400);
+    max-width: 440px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* SEARCH */
+  .search-wrap {
+    background: #0a0a0a;
+    border: 0.5px solid #2a2a2a;
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    transition: border-color 0.2s;
+  }
+  .search-wrap:focus-within { border-color: #555; }
+  .search-label {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--gray-400);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .search-row {
+    display: flex;
+    gap: 10px;
+  }
+  .search-row input {
+    flex: 1;
+    background: #111;
+    border: 0.5px solid #333;
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    color: white;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-row input::placeholder { color: #444; }
+  .search-row input:focus { border-color: #666; }
+  .btn-analyze {
+    background: white;
+    color: black;
+    border: none;
+    border-radius: var(--radius);
+    padding: 12px 24px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-analyze:hover { background: #e8e8e8; }
+  .btn-analyze:active { transform: scale(0.98); }
+  .btn-analyze:disabled { background: #333; color: #666; cursor: not-allowed; }
+
+  /* API KEY */
+  .api-notice {
+    background: #0a0a0a;
+    border: 0.5px solid #1f1f1f;
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .api-notice .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #f59e0b;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .api-notice .dot.green { background: #22c55e; }
+  .api-notice p { font-size: 13px; color: var(--gray-400); line-height: 1.6; }
+  .api-notice p strong { color: white; font-weight: 500; }
+  .api-key-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .api-key-row input {
+    flex: 1;
+    background: #111;
+    border: 0.5px solid #2a2a2a;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-family: 'DM Mono', monospace;
+    color: white;
+    outline: none;
+  }
+  .api-key-row input::placeholder { color: #333; }
+  .btn-save {
+    background: #1a1a1a;
+    border: 0.5px solid #333;
+    color: white;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .btn-save:hover { background: #2a2a2a; }
+
+  /* LOADING */
+  .loading-wrap {
+    display: none;
+    text-align: center;
+    padding: 3rem 0;
+  }
+  .loading-wrap.active { display: block; }
+  .spinner {
+    width: 32px; height: 32px;
+    border: 2px solid #222;
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 1rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-wrap p { font-size: 13px; color: var(--gray-400); }
+  .loading-steps { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 6px; align-items: center; }
+  .step-item {
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    color: #333;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 0.5px solid #1a1a1a;
+    transition: all 0.3s;
+  }
+  .step-item.active { color: white; border-color: #444; background: #111; }
+  .step-item.done { color: #22c55e; border-color: #1a3a1a; background: #0a1a0a; }
+
+  /* REPORT */
+  #report { display: none; }
+  #report.visible { display: block; animation: fadeUp 0.4s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  .report-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .report-title { font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+  .report-subtitle { font-size: 13px; color: var(--gray-400); margin-top: 4px; }
+  .report-meta {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: #444;
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  .divider { height: 0.5px; background: #1a1a1a; margin: 1.5rem 0; }
+
+  /* SECTION */
+  .section { margin-bottom: 1.5rem; }
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+  .section-num {
+    width: 22px; height: 22px;
+    border: 0.5px solid #333;
+    border-radius: 50%;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: #555;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* CARDS */
+  .card {
+    background: #0a0a0a;
+    border: 0.5px solid #1e1e1e;
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+    margin-bottom: 0.75rem;
+  }
+  .stat-box {
+    background: #111;
+    border: 0.5px solid #1e1e1e;
+    border-radius: var(--radius);
+    padding: 1rem;
+    text-align: center;
+  }
+  .stat-val { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
+  .stat-lbl { font-size: 11px; color: #555; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; font-family: 'DM Mono', monospace; }
+
+  /* COLORS */
+  .color-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+  .color-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #111;
+    border: 0.5px solid #1e1e1e;
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    min-width: 160px;
+  }
+  .color-swatch {
+    width: 28px; height: 28px;
+    border-radius: 5px;
+    border: 0.5px solid #333;
+    flex-shrink: 0;
+  }
+  .color-info { display: flex; flex-direction: column; }
+  .color-role { font-size: 11px; color: #555; }
+  .color-hex { font-size: 13px; font-family: 'DM Mono', monospace; color: white; font-weight: 500; }
+
+  /* CONTACTS */
+  .contact-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 0.5px solid #111;
+  }
+  .contact-item:last-child { border-bottom: none; }
+  .contact-left { display: flex; align-items: center; gap: 12px; }
+  .contact-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    border: 0.5px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #888;
+    flex-shrink: 0;
+  }
+  .contact-name { font-size: 14px; font-weight: 500; }
+  .contact-dept { font-size: 12px; color: #555; margin-top: 2px; }
+  .contact-badge {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-family: 'DM Mono', monospace;
+  }
+  .badge-linkedin { background: #0a1a2a; color: #4a9eff; border: 0.5px solid #1a3a5a; }
+  .badge-email { background: #0a1a0a; color: #4ade80; border: 0.5px solid #1a3a1a; }
+
+  /* TIPS */
+  .tip-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 0.5px solid #111;
+  }
+  .tip-item:last-child { border-bottom: none; }
+  .tip-num {
+    width: 24px; height: 24px;
+    border: 0.5px solid #2a2a2a;
+    border-radius: 50%;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: #444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .tip-content { flex: 1; }
+  .tip-title { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+  .tip-desc { font-size: 13px; color: #666; line-height: 1.6; }
+
+  /* MAIL */
+  .mail-box {
+    background: #050505;
+    border: 0.5px solid #1e1e1e;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .mail-header {
+    background: #0d0d0d;
+    border-bottom: 0.5px solid #1a1a1a;
+    padding: 1rem 1.25rem;
+  }
+  .mail-field {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .mail-field:last-child { margin-bottom: 0; }
+  .mail-field-label { color: #444; font-family: 'DM Mono', monospace; font-size: 11px; padding-top: 2px; min-width: 40px; }
+  .mail-field-val { color: #ccc; }
+  .mail-body {
+    padding: 1.25rem;
+    font-size: 13px;
+    color: #aaa;
+    line-height: 1.9;
+    white-space: pre-wrap;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .mail-actions {
+    border-top: 0.5px solid #1a1a1a;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    gap: 8px;
+  }
+  .btn-copy {
+    background: #1a1a1a;
+    border: 0.5px solid #2a2a2a;
+    color: #aaa;
+    border-radius: 6px;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-copy:hover { background: #222; color: white; }
+  .btn-copy.copied { color: #4ade80; border-color: #1a3a1a; }
+
+  /* VALUES */
+  .values-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+  .value-tag {
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: #111;
+    border: 0.5px solid #222;
+    color: #888;
+  }
+
+  /* BRAND TYPE */
+  .brand-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: #0a1a2a;
+    border: 0.5px solid #1a3a5a;
+    color: #4a9eff;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ERROR */
+  .error-box {
+    display: none;
+    background: #0f0505;
+    border: 0.5px solid #3a1a1a;
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    color: #f87171;
+    font-size: 13px;
+    margin-bottom: 1rem;
+  }
+  .error-box.visible { display: block; }
+
+  /* FOOTER */
+  footer {
+    border-top: 0.5px solid #111;
+    padding: 1.5rem 2rem;
+    text-align: center;
+    font-size: 11px;
+    color: #333;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 600px) {
+    main { padding: 2rem 1rem 3rem; }
+    header { padding: 1rem; }
+    .search-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">
+    <div class="logo-box">
+      <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 7C6 7 10 5 13 7C16 9 14 13 11 13C8 13 6 15 8 18C10 21 15 20 18 18" stroke="black" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M14 5H22V8" stroke="black" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M18 5V21" stroke="black" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M14 21H22" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="logo-text"><span>Şimşek Tekstil</span> — Araştırma</div>
+  </div>
+  <div class="header-tag">v1.0 · Personel Kıyafet</div>
+</header>
+
+<main>
+  <div class="hero">
+    <h1>Firma kimliğini analiz et,<br/><strong>koleksiyonu tasarla.</strong></h1>
+    <p>Hedef firmanın adını yaz. Marka renklerini, karar vericileri, kıyafet önerilerini ve hazır teklif mailini otomatik al.</p>
+  </div>
+
+
+
+  <!-- SEARCH -->
+  <div class="search-wrap">
+    <span class="search-label">Hedef firma</span>
+    <div class="search-row">
+      <input type="text" id="firmInput" placeholder="Gratis, Teknosa, Tekzen, LC Waikiki..." />
+      <button class="btn-analyze" id="analyzeBtn" onclick="analyze()">Analiz Et</button>
+    </div>
+  </div>
+
+  <!-- ERROR -->
+  <div class="error-box" id="errorBox"></div>
+
+  <!-- LOADING -->
+  <div class="loading-wrap" id="loadingWrap">
+    <div class="spinner"></div>
+    <p>Analiz yapılıyor...</p>
+    <div class="loading-steps">
+      <div class="step-item" id="step1">01 · Web sitesi taranıyor</div>
+      <div class="step-item" id="step2">02 · Marka kimliği çıkarılıyor</div>
+      <div class="step-item" id="step3">03 · Karar vericiler tespit ediliyor</div>
+      <div class="step-item" id="step4">04 · Tasarım önerileri üretiliyor</div>
+      <div class="step-item" id="step5">05 · Teklif maili hazırlanıyor</div>
+    </div>
+  </div>
+
+  <!-- REPORT -->
+  <div id="report">
+
+    <div class="report-header">
+      <div>
+        <div class="report-title" id="rFirmaAdi">—</div>
+        <div class="report-subtitle" id="rSektor">—</div>
+      </div>
+      <div class="report-meta">
+        <div id="rTarih">—</div>
+        <div>Şimşek Tekstil · Araştırma</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- GENEL BİLGİ -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-num">01</div>
+        <div class="section-title">Genel Bilgi</div>
+      </div>
+      <div class="card-grid" id="rStatGrid"></div>
+      <div class="card" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <span style="font-size:13px; color:#555;">Firma tipi:</span>
+        <span class="brand-type-badge" id="rFirmaTipi">—</span>
+        <span style="font-size:13px; color:#555; margin-left:8px;">Kuruluş:</span>
+        <span style="font-size:13px; color:#aaa;" id="rKurulus">—</span>
+        <span style="font-size:13px; color:#555; margin-left:8px;">Merkez:</span>
+        <span style="font-size:13px; color:#aaa;" id="rMerkez">—</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- MARKA KİMLİĞİ -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-num">02</div>
+        <div class="section-title">Marka Kimliği & Renkler</div>
+      </div>
+      <div class="card">
+        <div style="margin-bottom:1rem;">
+          <div style="font-size:11px; color:#444; font-family:'DM Mono',monospace; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:10px;">Marka renkleri</div>
+          <div class="color-grid" id="rRenkler"></div>
+        </div>
+        <div class="divider" style="margin:1rem 0;"></div>
+        <div>
+          <div style="font-size:11px; color:#444; font-family:'DM Mono',monospace; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:10px;">Marka değerleri & tonu</div>
+          <div class="values-wrap" id="rDegerler"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- KARAR VERİCİLER -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-num">03</div>
+        <div class="section-title">Ulaşılacak Kişiler</div>
+      </div>
+      <div class="card" id="rKisiler"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- TASARIM ÖNERİLERİ -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-num">04</div>
+        <div class="section-title">Kıyafet Tasarım Önerileri</div>
+      </div>
+      <div class="card" id="rTasarim"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- TEKLİF MAİLİ -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-num">05</div>
+        <div class="section-title">Hazır Teklif Maili</div>
+      </div>
+      <div class="mail-box">
+        <div class="mail-header">
+          <div class="mail-field">
+            <span class="mail-field-label">Konu</span>
+            <span class="mail-field-val" id="rMailKonu">—</span>
+          </div>
+          <div class="mail-field">
+            <span class="mail-field-label">Alıcı</span>
+            <span class="mail-field-val" id="rMailAlici">—</span>
+          </div>
+        </div>
+        <div class="mail-body" id="rMailBody">—</div>
+        <div class="mail-actions">
+          <button class="btn-copy" id="copyBtn" onclick="copyMail()">Kopyala</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>ŞT · Şimşek Tekstil Marka Araştırma Aracı · Dahili Kullanım</footer>
+
+<script>
+const _k = 'c2stYW50LWFwaTAzLU83LU01SG40RUV2QWtCM2N3VGlyaktjdWlHdGdnZEpJRFdhZ1ZxNndZdHEyelBoRnFQNjVRRW5qaVFLZkN3aDFDOGtPbmhLLXMteXAwRDVDall0aXF3LUZjZlBxUUFB';
+const apiKey = atob(_k);
+
+function init() {
+  if (apiKey) {
+    document.getElementById('apiDot').classList.add('green');
+    document.getElementById('apiNotice').querySelector('p').innerHTML =
+      '<strong>API Key kayıtlı.</strong> Değiştirmek istersen aşağıya yeni key\'i gir.';
+    document.getElementById('apiKeyInput').placeholder = 'sk-ant-api03-••••••••••••';
+  }
+}
+
+function saveApiKey() {
+  const val = document.getElementById('apiKeyInput').value.trim();
+  if (!val || !val.startsWith('sk-ant')) {
+    alert('Geçerli bir Anthropic API key gir. "sk-ant-..." ile başlamalı.');
+    return;
+  }
+  apiKey = val;
+  localStorage.setItem('st_api_key', val);
+  document.getElementById('apiDot').classList.add('green');
+  document.getElementById('apiNotice').querySelector('p').innerHTML =
+    '<strong>API Key kaydedildi.</strong> Artık analiz yapabilirsin.';
+  document.getElementById('apiKeyInput').value = '';
+  document.getElementById('apiKeyInput').placeholder = 'sk-ant-api03-••••••••••••';
+}
+
+function setStep(n) {
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById('step' + i);
+    if (i < n) { el.className = 'step-item done'; }
+    else if (i === n) { el.className = 'step-item active'; }
+    else { el.className = 'step-item'; }
+  }
+}
+
+async function analyze() {
+  const firma = document.getElementById('firmInput').value.trim();
+  if (!firma) { showError('Lütfen bir firma adı gir.'); return; }
+  if (!apiKey) { showError('Önce API key\'ini kaydet.'); return; }
+
+  hideError();
+  document.getElementById('report').classList.remove('visible');
+  document.getElementById('loadingWrap').classList.add('active');
+  document.getElementById('analyzeBtn').disabled = true;
+
+  setStep(1);
+  await delay(600);
+  setStep(2);
+  await delay(500);
+  setStep(3);
+  await delay(500);
+  setStep(4);
+  await delay(400);
+  setStep(5);
+
+  const prompt = `Sen Türkiye'deki "${firma}" firmasını araştıran bir marka analisti ve tekstil danışmanısın.
+  
+Şimşek Tekstil adına, bu firmaya personel kıyafeti satmak için kapsamlı bir araştırma yap.
+
+Aşağıdaki JSON formatında cevap ver. SADECE JSON döndür, başka hiçbir şey yazma:
+
+{
+  "firma_adi": "Firmanın tam resmi adı",
+  "sektor": "Firmanın sektörü (örn: Kozmetik & Kişisel Bakım Perakende)",
+  "magaza_sayisi": "Türkiye'deki mağaza/şube sayısı (sayı veya tahmini aralık)",
+  "calisan_sayisi": "Toplam çalışan sayısı (tahmini)",
+  "il_sayisi": "Kaç ilde var (sayı)",
+  "firma_tipi": "Zincir mi, Franchise mi, Karma mı?",
+  "kurulus_yili": "Kuruluş yılı",
+  "genel_merkez": "Şehir",
+  "marka_renkleri": [
+    {"rol": "Ana renk", "hex": "#XXXXXX", "isim": "renk adı"},
+    {"rol": "İkincil renk", "hex": "#XXXXXX", "isim": "renk adı"},
+    {"rol": "Arka plan", "hex": "#XXXXXX", "isim": "renk adı"}
+  ],
+  "marka_degerleri": ["değer1", "değer2", "değer3", "değer4", "değer5", "değer6"],
+  "karar_vericiler": [
+    {"unvan": "İnsan Kaynakları Direktörü", "departman": "İnsan Kaynakları", "platform": "linkedin"},
+    {"unvan": "Satın Alma Müdürü", "departman": "Procurement / Satın Alma", "platform": "linkedin"},
+    {"unvan": "Operasyon Direktörü", "departman": "Mağaza Operasyon", "platform": "linkedin"},
+    {"unvan": "Genel Müdür Yardımcısı", "departman": "Yönetim", "platform": "email"}
+  ],
+  "tasarim_onerileri": [
+    {"baslik": "Ana kıyafet önerisi", "aciklama": "Detaylı açıklama, hangi model, neden"},
+    {"baslik": "Renk stratejisi", "aciklama": "Marka renklerini kıyafete nasıl yansıt"},
+    {"baslik": "Kumaş önerisi", "aciklama": "Hangi kumaş kompozisyonu neden"},
+    {"baslik": "Aksesuar & detay", "aciklama": "Nakış, baskı, yaka detayı önerileri"},
+    {"baslik": "Mevsimlik koleksiyon", "aciklama": "Yaz/kış seçenekleri"}
+  ],
+  "mail_konu": "Profesyonel e-posta konu satırı",
+  "mail_alici": "Hangi unvana gönderilmeli",
+  "mail_icerik": "Tamamen profesyonel, ikna edici, kişiselleştirilmiş bir teklif maili. Firma adını, marka renklerini ve kimliğini incelediğimizi belli et. 4-5 paragraf. Şimşek Tekstil adına yazılmış gibi."
+}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || 'API hatası: ' + res.status);
+    }
+
+    const data = await res.json();
+    let text = data.content[0].text.trim();
+    text = text.replace(/```json|```/g, '').trim();
+    const d = JSON.parse(text);
+
+    renderReport(d, firma);
+  } catch (e) {
+    document.getElementById('loadingWrap').classList.remove('active');
+    document.getElementById('analyzeBtn').disabled = false;
+    showError('Hata: ' + e.message);
+  }
+}
+
+function renderReport(d, firma) {
+  document.getElementById('loadingWrap').classList.remove('active');
+  document.getElementById('analyzeBtn').disabled = false;
+
+  document.getElementById('rFirmaAdi').textContent = d.firma_adi || firma;
+  document.getElementById('rSektor').textContent = d.sektor || '—';
+  document.getElementById('rTarih').textContent = new Date().toLocaleDateString('tr-TR', { day:'numeric', month:'long', year:'numeric' });
+  document.getElementById('rFirmaTipi').textContent = d.firma_tipi || '—';
+  document.getElementById('rKurulus').textContent = d.kurulus_yili || '—';
+  document.getElementById('rMerkez').textContent = d.genel_merkez || '—';
+
+  // Stats
+  const stats = [
+    { val: d.magaza_sayisi || '—', lbl: 'Mağaza / Şube' },
+    { val: d.calisan_sayisi || '—', lbl: 'Çalışan' },
+    { val: d.il_sayisi || '—', lbl: 'İl' }
+  ];
+  document.getElementById('rStatGrid').innerHTML = stats.map(s =>
+    `<div class="stat-box"><div class="stat-val">${s.val}</div><div class="stat-lbl">${s.lbl}</div></div>`
+  ).join('');
+
+  // Renkler
+  document.getElementById('rRenkler').innerHTML = (d.marka_renkleri || []).map(r =>
+    `<div class="color-item">
+      <div class="color-swatch" style="background:${r.hex};"></div>
+      <div class="color-info">
+        <span class="color-role">${r.rol}</span>
+        <span class="color-hex">${r.hex}</span>
+      </div>
+    </div>`
+  ).join('');
+
+  // Değerler
+  document.getElementById('rDegerler').innerHTML = (d.marka_degerleri || []).map(v =>
+    `<span class="value-tag">${v}</span>`
+  ).join('');
+
+  // Kişiler
+  document.getElementById('rKisiler').innerHTML = (d.karar_vericiler || []).map(k => {
+    const initials = k.unvan.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase();
+    const badge = k.platform === 'linkedin'
+      ? `<span class="contact-badge badge-linkedin">LinkedIn</span>`
+      : `<span class="contact-badge badge-email">E-posta</span>`;
+    return `<div class="contact-item">
+      <div class="contact-left">
+        <div class="contact-avatar">${initials}</div>
+        <div>
+          <div class="contact-name">${k.unvan}</div>
+          <div class="contact-dept">${k.departman}</div>
+        </div>
+      </div>
+      ${badge}
+    </div>`;
+  }).join('');
+
+  // Tasarım
+  document.getElementById('rTasarim').innerHTML = (d.tasarim_onerileri || []).map((t, i) =>
+    `<div class="tip-item">
+      <div class="tip-num">0${i+1}</div>
+      <div class="tip-content">
+        <div class="tip-title">${t.baslik}</div>
+        <div class="tip-desc">${t.aciklama}</div>
+      </div>
+    </div>`
+  ).join('');
+
+  // Mail
+  document.getElementById('rMailKonu').textContent = d.mail_konu || '—';
+  document.getElementById('rMailAlici').textContent = d.mail_alici || '—';
+  document.getElementById('rMailBody').textContent = d.mail_icerik || '—';
+
+  document.getElementById('report').classList.add('visible');
+  document.getElementById('report').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function copyMail() {
+  const text = document.getElementById('rMailBody').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'Kopyalandı ✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Kopyala'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorBox');
+  el.textContent = msg;
+  el.classList.add('visible');
+}
+function hideError() {
+  document.getElementById('errorBox').classList.remove('visible');
+}
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+init();
+</script>
+</body>
+</html>
