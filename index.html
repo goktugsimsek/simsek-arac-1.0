@@ -526,6 +526,18 @@
 
 
 
+  <!-- API KEY -->
+  <div class="api-notice" id="apiNotice">
+    <div class="dot" id="apiDot"></div>
+    <div style="flex:1">
+      <p><strong>API Key gerekli.</strong> Anthropic Console'dan aldığın key'i gir. Bir kez kaydedince bir daha sormaz.</p>
+      <div class="api-key-row">
+        <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." />
+        <button class="btn-save" onclick="saveApiKey()">Kaydet</button>
+      </div>
+    </div>
+  </div>
+
   <!-- SEARCH -->
   <div class="search-wrap">
     <span class="search-label">Hedef firma</span>
@@ -659,8 +671,7 @@
 <footer>ŞT · Şimşek Tekstil Marka Araştırma Aracı · Dahili Kullanım</footer>
 
 <script>
-const _k = 'c2stYW50LWFwaTAzLU83LU01SG40RUV2QWtCM2N3VGlyaktjdWlHdGdnZEpJRFdhZ1ZxNndZdHEyelBoRnFQNjVRRW5qaVFLZkN3aDFDOGtPbmhLLXMteXAwRDVDall0aXF3LUZjZlBxUUFB';
-const apiKey = atob(_k);
+let apiKey = localStorage.getItem('st_key') || '';
 
 function init() {
   if (apiKey) {
@@ -678,7 +689,7 @@ function saveApiKey() {
     return;
   }
   apiKey = val;
-  localStorage.setItem('st_api_key', val);
+  localStorage.setItem('st_key', val);
   document.getElementById('apiDot').classList.add('green');
   document.getElementById('apiNotice').querySelector('p').innerHTML =
     '<strong>API Key kaydedildi.</strong> Artık analiz yapabilirsin.';
